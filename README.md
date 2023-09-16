@@ -62,7 +62,7 @@ There are two ways for this module to control the speed of the motor. An easier 
 
 Again, we can re-use the hello_pwm code to demonstrate how PWM can be used to control the motor speed using the L298N motor controller. Connect the motor controller as follows and observe how the left or right wheel turns.
 
-<img src="l298n.jpg" width=50% height=50%>
+<img src="/img/motor.png" width=100% height=100%>
 
 ## **ANALOG-TO-DIGITAL CONVERTER**
 
@@ -76,7 +76,7 @@ The IR line sensor is a reflective sensor that includes an infrared emitter and 
 
 The IR sensor depicted below features both analog and digital outputs. The digital output alternates between high and low based on the infrared light's reflection, with a threshold set via a potentiometer determining the state. However, in this lab, we will exclusively utilize the Analog output (A), which provides a continuous signal proportional to the intensity of the reflected IR light. Subsequently, we will employ the ADC to convert this analog signal into a digital value, enabling precise measurement and offering a more comprehensive range of information compared to the binary high-low output of the digital mode.
 
-<img src="irline.jpg" width=50% height=50%>
+<img src="/img/irlinesensor.png" width=100% height=100%>
 
 Again, we can re-use the adc_console code to demonstrate how ADC can be used to obtain the analog signal from the IR-based sensor and convert it into a digital format. Connect the IR sensor as follows and observe the data received via the serial monitor.
 
