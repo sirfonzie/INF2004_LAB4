@@ -3,7 +3,7 @@
 **OBJECTIVES**
 -	Configure and implement Pulse Width Modulation (PWM) on RPi Pico
 -	Configure and implement an Analog-to-Digital Converter (ADC) on RPi Pico
--	Understand how to configure the (line following) IR-based sensor & motor controller
+-	Understand how to configure the (line following) IR-based sensor & L298N Motor controller
 
 
 **EQUIPMENT** 
@@ -16,27 +16,56 @@
 
 ## **INTRODUCTION** 
 
-In the previous lab session, we learned that we can use interrupts to detect and react to requests from the GPIO and Timer. For GPIO, we can react when the GPIO pins change while for the Timer, we can invoke callback functions once the timer has lapsed. A timer can also be used as a counter that keeps track of the number of times a particular event or process occurred regarding a clock signal. It is used to count the events happening outside the microcontroller. However, this counter can also be configured to produce a pulse with a specific duty cycle known as pulse-width modulation (PWM). These PWM timers are commonly used for motion control and dimming LEDs.
+In the previous lab session, we learned that we can use interrupts to detect and react to requests from the GPIO and Timer. For GPIO, we can react when the GPIO pins change while for the Timer, we can invoke callback functions once the timer has lapsed. A timer can also be used as a counter that keeps track of the number of times a particular event or process occurred regarding a clock signal. It is used to count the events happening outside the microcontroller. However, this counter can also be configured to produce a pulse with a specific duty cycle known as pulse-width modulation (PWM). It is particularly useful for tasks like motor control, LED dimming, and generating analog-like signals. PWM works by varying the duty cycle (percentage of time the signal is ON) of a square wave signal while keeping its frequency constant. 
 
 Typically, GPIO when configured as input is able to accept data as high, low, or edge-based signals. However, the world we live in doesn't always offer discrete data. Thus, we would also be looking at Analog-to-Digital Converter (ADC), which is an essential part of any embedded system. It helps to obtain **Analog** data (i.e. temperature, humidity, etc) that can’t be directly read on any microcontroller as they are in analog format. To read this type of analog data, we have to convert this analog data into a digital format via an ADC inside the microcontroller.
 
 Lastly, we will understand how we can use PWM to adjust the speed of the motor via the motor controller and incorporate ADC for the IR-based sensor in measuring contrast on the surface.
 
-## **HARDWARE INTERRUPTS** 
+## **PULSE-WIDTH MODULATION** 
 
-A hardware interrupt is an electronic signal that alerts the microprocessor of an event. An interrupt can be triggered by either an internal peripheral (e.g. timer) or an external device (e.g. button).
+The Raspberry Pi Pico, with its GPIO pins and the Pico C SDK, provides a convenient way to generate PWM signals for various applications. Configuring PWM on the Raspberry Pi Pico using the Pico C SDK involves several steps, including initializing the PWM hardware, setting the frequency, configuring channels, and controlling the duty cycle. PWM on the Raspberry Pi Pico is achieved through PWM slices. To understand how PWM works on the Pico, it's essential to understand the concept of PWM slices and how they are used to generate PWM signals.
 
-In the previous lab session, polling was used to detect when a button was pressed. When polling is used, the microprocessor repeatedly checks whether the event has occurred. In the case of a button, the value of the GPIO pin is read to determine if it is high (unpressed) or low (pressed). Once the button is pressed, the microprocessor detects it quickly since it is always active and does nothing but check this single condition, as shown in Figure 1 (bottom). 
+**What are PWM Slices?**
 
-While polling is a simple way to check for state changes, there's a cost. If the checking interval is shorter, there can be a long lag between occurrence and Detection, and you may fail to see the change entirely if the state changes back before you check. A shorter interval will get faster and more reliable Detection and consume more processing time and power since many more checks will return negative.
+PWM slices are hardware modules on the Raspberry Pi Pico designed specifically for generating PWM signals. These slices offer a flexible and efficient way to produce PWM waveforms with precise control over parameters like frequency, duty cycle, and polarity. The Pico has multiple PWM slices, and each slice can generate one or more PWM channels.
 
-An alternative is configuring an interrupt on the button's GPIO pin so that an interrupt is generated when a pre-configured trigger condition is met. With this approach, the microprocessor can enter a low-power sleep state and be woken up with the interrupt. The Pico can detect signal changes (e.g. rising or falling edges) to generate an interrupt. If a GPIO pin is configured to be pulled up, a falling edge will occur when the button is pressed, pulling the pin to the ground. Interrupts are thus better suited to handle asynchronous events.
+**Key Features and Concepts:**
 
-<img src="https://www.renesas.com/sites/default/files/inline-images/fig1-interrupts-vs-polling-en.jpg" width=80% height=80%>
+1. **Multiple PWM Slices:** The Pico typically has multiple PWM slices, each capable of generating one or more PWM channels. The actual number of slices and channels may vary depending on the specific microcontroller model used in the Pico.
 
-A dedicated or grouped interrupt is triggered, depending on the source of the interrupt. For peripherals like GPIO ports, multiple pins could produce the same interrupt. In these cases, it is necessary to query the pin's interrupt vector register to identify the interrupt's exact source. Typically, this is done inside the ISR. Once an ISR identifies the source of the interrupt, it can react accordingly. Typically, ISRs execute in a privileged mode that can mask other interrupts. Hence, ISR should be as short as possible and only set application-specific flags to indicate to the microprocessor's main thread to execute the corresponding task in response to an interrupt.
+2. **PWM Channels:** Each PWM slice can generate one or more PWM channels. A PWM channel corresponds to a specific GPIO pin that can output a PWM signal. This allows you to control multiple devices or components independently.
 
-## **GPIO INTERRUPT REQUEST**
+3. **Frequency:** PWM slices allow you to set the frequency of the PWM signal. Frequency is the number of PWM cycles (periods) per second. Higher frequencies can provide smoother control but may require more CPU resources.
+
+4. **Duty Cycle:** The duty cycle represents the proportion of time during one PWM cycle that the signal is high (on). It is usually expressed as a percentage. A 50% duty cycle means the signal is high for half of the cycle.
+
+5. **Polarity:** PWM slices often support polarity settings, allowing you to specify whether the PWM signal starts high or low at the beginning of each cycle. Polarity settings can affect how devices respond to the PWM signal.
+
+**How PWM Slices Work:**
+
+Here's a step-by-step explanation of how PWM slices work on the Raspberry Pi Pico:
+
+1. **Initialization:** Before using PWM, you initialize the PWM system using the `pwm_init()` function. This initializes all PWM slices and channels.
+
+2. **Configuring Channels:** You configure the GPIO pins for PWM operation by setting their functions to `GPIO_FUNC_PWM` using `gpio_set_function()`. This allocates the pins to specific PWM channels.
+
+3. **Frequency Setup:** You set the desired PWM frequency using the `pwm_set_wrap()` function. This determines how fast the PWM signal oscillates between high and low.
+
+4. **Duty Cycle:** To control the duty cycle, you use the `pwm_set_chan_level()` function to specify when the signal transitions between high and low within each PWM cycle.
+
+5. **Polarity Control:** If necessary, you can set the polarity of the PWM signal using `pwm_set_polarity()` to determine whether the signal starts high or low.
+
+6. **Enabling PWM:** Once you've configured the PWM slices and channels, you enable the PWM signal using `pwm_set_enabled()`.
+
+7. **Generation of PWM Signals:** Once enabled, the hardware takes care of generating the PWM signals based on your settings. The PWM signal is typically a square wave that repeats according to the configured frequency and duty cycle.
+
+8. **Updating Parameters:** If needed, you can update the PWM parameters, such as frequency or duty cycle, at runtime to modify the PWM signal.
+
+9. **Disabling PWM:** When you're done with PWM, you can disable it using `pwm_set_enabled()`.
+
+
+## **UNDERSTANDING THE L298N MOTOR CONTROLLER**
 
 We will be exploring the [hello_gpio_irq.c](https://github.com/raspberrypi/pico-examples/blob/master/gpio/hello_gpio_irq/hello_gpio_irq.c) sample code designed for the Pico W. In this session, we'll merge our knowledge of GPIO with the concept of interrupts. Instead of the previous lab's approach, where we continuously polled the GPIO pin status using the `while(true)` statement, we'll now integrate interrupts. This will allow us to trigger the interrupts based on the desired state, whether edge-triggered or level-triggered. In this example, edge-triggered has been chosen. How would you change it to level-triggered? 
 
