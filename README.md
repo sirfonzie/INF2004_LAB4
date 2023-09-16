@@ -52,15 +52,27 @@ Here's a step-by-step explanation of how PWM slices work on the Raspberry Pi Pic
 8. **Updating Parameters:** If needed, you can update the PWM parameters, such as frequency or duty cycle, at runtime to modify the PWM signal.
 9. **Disabling PWM:** When you're done with PWM, you can disable it using `pwm_set_enabled()`.
 
-The following code [hello_pwm](https://github.com/raspberrypi/pico-examples/blob/master/pwm/hello_pwm/hello_pwm.c) illustrates a simple example of how a PWM can be configured on the Raspberry Pi Pico.
+The following code [hello_pwm](https://github.com/raspberrypi/pico-examples/blob/master/pwm/hello_pwm/hello_pwm.c) illustrates a simple example of how a PWM can be configured on the Raspberry Pi Pico. You could connect GP0 and GP1 to an oscilloscope to observe the signal. Alternatively, you may observe the effects of PWM on the motor controller by connecting as described in the next section.
 
 ## **UNDERSTANDING THE L298N MOTOR CONTROLLER**
 
-The L298N module is a high-power motor driver module for driving DC and stepper motors. This module consists of an L298 motor driver IC and a 78M05 5V regulator. This module can control up to two DC motors with directional and speed control. The datasheet of the module can be found at the following [link](https://components101.com/modules/l293n-motor-driver-module). 
+The L298N module is a high-power motor driver module for driving DC and stepper motors. This module comprises an L298 motor driver IC and a 78M05 5V regulator. This module can control up to two DC motors with directional and speed control. The module's datasheet can be found at the following [link](https://components101.com/modules/l293n-motor-driver-module). 
 
 There are two ways for this module to control the speed of the motor. An easier way would be to use a jumper across ENA and ENB to fix the voltage to the maximum. However, removing the jumper and connecting the pin to a PWM source would facilitate controlling the motor’s speed. PWM is a widely used technique to control the speed of DC motors, including those used in robotics and other applications.
 
-Again, we can re-use the hello_pwm code to demonstrate how PWM can be used to control the motor speed using the L298N motor controller. Connect the motor controller as follows and observe how the left or right wheel turns.
+Again, we can use the [hello_pwm](https://github.com/raspberrypi/pico-examples/blob/master/pwm/hello_pwm/hello_pwm.c) code with some changes to demonstrate how PWM can control the motor speed using the L298N motor controller. Connect the motor controller as follows and observe how fast the motor turns.
+
+The following changes are required:
+
+include this in line #21: `pwm_set_clkdiv(slice_num, 100);`
+
+change line #23: `pwm_set_wrap(slice_num, 3);` --> `pwm_set_wrap(slice_num, 12500);`
+
+change line #25: `pwm_set_chan_level(slice_num, PWM_CHAN_A, 1);` --> `pwm_set_chan_level(slice_num, PWM_CHAN_A, 12500/2);`
+
+comment off line #27: `pwm_set_chan_level(slice_num, PWM_CHAN_B, 3);` --> `\\pwm_set_chan_level(slice_num, PWM_CHAN_B, 3);`
+
+This modified code snippet configures the Raspberry Pi Pico to generate PWM (Pulse Width Modulation) signals on GPIO pins 0 via the gpio_set_function function. It then obtains the PWM slice number associated with pin 0 and sets the clock divisor to 100, determining the PWM frequency. The pwm_set_wrap function sets the PWM wrap value, essentially determining the period of the PWM signal. Here, it's set to 12500, which corresponds to a PWM frequency of 1 kHz. pwm_set_chan_level sets the duty cycle of the PWM signal on channel A of the specified PWM slice to 50% (12500/2). Finally, pwm_set_enabled enables the PWM output on the specified slice. In summary, this code initializes PWM on GP0 with a 1 kHz frequency and a 50% duty cycle, effectively generating a square wave output.
 
 <img src="/img/motor.png" width=100% height=100%>
 
