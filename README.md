@@ -10,6 +10,8 @@
 1.	A laptop that has the Pico C/C++ SDK installed
 2.	Raspberry Pico W
 3.	Micro-USB Cable
+4.	IR-based Line Sensor
+5.	Motor Controller & DC Motor
 
 > [NOTE]
 > Only students wearing fully covered shoes are allowed in the SR6A lab due to safety.
