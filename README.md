@@ -59,14 +59,10 @@ There are two ways for this module to control the speed of the motor. An easier 
 Again, we can use the [hello_pwm](https://github.com/raspberrypi/pico-examples/blob/master/pwm/hello_pwm/hello_pwm.c) code with some changes to demonstrate how PWM can control the motor speed using the L298N motor controller. Connect the motor controller as follows and observe how fast the motor turns.
 
 The following changes are required:
-
-include this in line #21: `pwm_set_clkdiv(slice_num, 100);`
-
-change line #23: `pwm_set_wrap(slice_num, 3);` --> `pwm_set_wrap(slice_num, 12500);`
-
-change line #25: `pwm_set_chan_level(slice_num, PWM_CHAN_A, 1);` --> `pwm_set_chan_level(slice_num, PWM_CHAN_A, 12500/2);`
-
-comment off line #27: `pwm_set_chan_level(slice_num, PWM_CHAN_B, 3);` --> `\\pwm_set_chan_level(slice_num, PWM_CHAN_B, 3);`
+1. include this in line #21: `pwm_set_clkdiv(slice_num, 100);`
+2. change line #23: `pwm_set_wrap(slice_num, 3);` --> `pwm_set_wrap(slice_num, 12500);`
+3. change line #25: `pwm_set_chan_level(slice_num, PWM_CHAN_A, 1);` --> `pwm_set_chan_level(slice_num, PWM_CHAN_A, 12500/2);`
+4. comment off line #27: `pwm_set_chan_level(slice_num, PWM_CHAN_B, 3);` --> `\\pwm_set_chan_level(slice_num, PWM_CHAN_B, 3);`
 
 This modified code snippet configures the Raspberry Pi Pico to generate PWM (Pulse Width Modulation) signals on GPIO pins 0 via the gpio_set_function function. It then obtains the PWM slice number associated with pin 0 and sets the clock divisor to 100, determining the PWM frequency. The pwm_set_wrap function sets the PWM wrap value, essentially determining the period of the PWM signal. Here, it's set to 12500, which corresponds to a PWM frequency of 1 kHz. pwm_set_chan_level sets the duty cycle of the PWM signal on channel A of the specified PWM slice to 50% (12500/2). Finally, pwm_set_enabled enables the PWM output on the specified slice. In summary, this code initializes PWM on GP0 with a 1 kHz frequency and a 50% duty cycle, effectively generating a square wave output.
 
