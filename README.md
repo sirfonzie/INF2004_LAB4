@@ -33,13 +33,9 @@ PWM slices are hardware modules on the Raspberry Pi Pico designed specifically f
 **Key Features and Concepts:**
 
 1. **Multiple PWM Slices:** The Pico typically has multiple PWM slices, each capable of generating one or more PWM channels. The actual number of slices and channels may vary depending on the specific microcontroller model used in the Pico.
-
 2. **PWM Channels:** Each PWM slice can generate one or more PWM channels. A PWM channel corresponds to a specific GPIO pin that can output a PWM signal. This allows you to control multiple devices or components independently.
-
 3. **Frequency:** PWM slices allow you to set the frequency of the PWM signal. Frequency is the number of PWM cycles (periods) per second. Higher frequencies can provide smoother control but may require more CPU resources.
-
 4. **Duty Cycle:** The duty cycle represents the proportion of time during one PWM cycle that the signal is high (on). It is usually expressed as a percentage. A 50% duty cycle means the signal is high for half of the cycle.
-
 5. **Polarity:** PWM slices often support polarity settings, allowing you to specify whether the PWM signal starts high or low at the beginning of each cycle. Polarity settings can affect how devices respond to the PWM signal.
 
 **How PWM Slices Work:**
@@ -47,27 +43,26 @@ PWM slices are hardware modules on the Raspberry Pi Pico designed specifically f
 Here's a step-by-step explanation of how PWM slices work on the Raspberry Pi Pico:
 
 1. **Initialization:** Before using PWM, you initialize the PWM system using the `pwm_init()` function. This initializes all PWM slices and channels.
-
 2. **Configuring Channels:** You configure the GPIO pins for PWM operation by setting their functions to `GPIO_FUNC_PWM` using `gpio_set_function()`. This allocates the pins to specific PWM channels.
-
 3. **Frequency Setup:** You set the desired PWM frequency using the `pwm_set_wrap()` function. This determines how fast the PWM signal oscillates between high and low.
-
 4. **Duty Cycle:** To control the duty cycle, you use the `pwm_set_chan_level()` function to specify when the signal transitions between high and low within each PWM cycle.
-
 5. **Polarity Control:** If necessary, you can set the polarity of the PWM signal using `pwm_set_polarity()` to determine whether the signal starts high or low.
-
 6. **Enabling PWM:** Once you've configured the PWM slices and channels, you enable the PWM signal using `pwm_set_enabled()`.
-
 7. **Generation of PWM Signals:** Once enabled, the hardware takes care of generating the PWM signals based on your settings. The PWM signal is typically a square wave that repeats according to the configured frequency and duty cycle.
-
 8. **Updating Parameters:** If needed, you can update the PWM parameters, such as frequency or duty cycle, at runtime to modify the PWM signal.
-
 9. **Disabling PWM:** When you're done with PWM, you can disable it using `pwm_set_enabled()`.
 
+The following code [hello_pwm](https://github.com/raspberrypi/pico-examples/blob/master/pwm/hello_pwm/hello_pwm.c) illustrates a simple example of how a PWM can be configured on the Raspberry Pi Pico.
 
 ## **UNDERSTANDING THE L298N MOTOR CONTROLLER**
 
 The L298N module is a high-power motor driver module for driving DC and stepper motors. This module consists of an L298 motor driver IC and a 78M05 5V regulator. This module can control up to two DC motors with directional and speed control. The datasheet of the module can be found at the following [link](https://components101.com/modules/l293n-motor-driver-module). 
+
+There are two ways for this module to control the speed of the motor. An easier way would be to use a jumper across ENA and ENB to fix the voltage to the maximum. However, removing the jumper and connecting the pin to a PWM source would facilitate controlling the motor’s speed. PWM is a widely used technique to control the speed of DC motors, including those used in robotics and other applications.
+
+Again, we can re-use the hello_pwm code to demonstrate how PWM can be used to control the motor speed using the L298N motor controller. Connect the motor controller as follows and observe how the left or right wheel turns.
+
+<img src="l298n.jpg" width=50% height=50%>
 
 ## **IR-BASED WHEEL ENCODER**
 
