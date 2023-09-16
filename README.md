@@ -24,11 +24,11 @@ Lastly, we will understand how we can use PWM to adjust the speed of the motor v
 
 ## **PULSE-WIDTH MODULATION** 
 
-The Raspberry Pi Pico, with its GPIO pins and the Pico C SDK, provides a convenient way to generate PWM signals for various applications. Configuring PWM on the Raspberry Pi Pico using the Pico C SDK involves several steps, including initializing the PWM hardware, setting the frequency, configuring channels, and controlling the duty cycle. PWM on the Raspberry Pi Pico is achieved through PWM slices. To understand how PWM works on the Pico, it's essential to understand the concept of PWM slices and how they are used to generate PWM signals.
+The Raspberry Pi Pico, with its GPIO pins and the Pico C SDK, provides a convenient way to generate PWM signals for various applications. Configuring PWM on the Raspberry Pi Pico using the Pico C SDK involves several steps, including initializing the PWM hardware, setting the frequency, configuring channels, and controlling the duty cycle. PWM on the Raspberry Pi Pico is achieved through PWM slices. To understand how PWM works on the Pico, it's essential to understand the concept of PWM slices and how they generate PWM signals.
 
 **What are PWM Slices?**
 
-PWM slices are hardware modules on the Raspberry Pi Pico designed specifically for generating PWM signals. These slices offer a flexible and efficient way to produce PWM waveforms with precise control over parameters like frequency, duty cycle, and polarity. The Pico has multiple PWM slices, and each slice can generate one or more PWM channels.
+PWM slices are hardware modules on the Raspberry Pi Pico designed to generate PWM signals. These slices offer a flexible and efficient way to produce PWM waveforms with precise control over parameters like frequency, duty cycle, and polarity. The Pico has multiple PWM slices, and each slice can generate one or more PWM channels.
 
 **Key Features and Concepts:**
 
@@ -36,23 +36,19 @@ PWM slices are hardware modules on the Raspberry Pi Pico designed specifically f
 2. **PWM Channels:** Each PWM slice can generate one or more PWM channels. A PWM channel corresponds to a specific GPIO pin that can output a PWM signal. This allows you to control multiple devices or components independently.
 3. **Frequency:** PWM slices allow you to set the frequency of the PWM signal. Frequency is the number of PWM cycles (periods) per second. Higher frequencies can provide smoother control but may require more CPU resources.
 4. **Duty Cycle:** The duty cycle represents the proportion of time during one PWM cycle that the signal is high (on). It is usually expressed as a percentage. A 50% duty cycle means the signal is high for half of the cycle.
-5. **Polarity:** PWM slices often support polarity settings, allowing you to specify whether the PWM signal starts high or low at the beginning of each cycle. Polarity settings can affect how devices respond to the PWM signal.
 
 **How PWM Slices Work:**
 
-Here's a step-by-step explanation of how PWM slices work on the Raspberry Pi Pico:
-
-1. **Initialization:** Before using PWM, you initialize the PWM system using the `pwm_init()` function. This initializes all PWM slices and channels.
+Here's a brief explanation of how PWM slices work on the Raspberry Pi Pico:
+1. **Initialization:** Before using PWM, initialize the PWM system using the `pwm_init()` function. This initializes all PWM slices and channels.
 2. **Configuring Channels:** You configure the GPIO pins for PWM operation by setting their functions to `GPIO_FUNC_PWM` using `gpio_set_function()`. This allocates the pins to specific PWM channels.
 3. **Frequency Setup:** You set the desired PWM frequency using the `pwm_set_wrap()` function. This determines how fast the PWM signal oscillates between high and low.
 4. **Duty Cycle:** To control the duty cycle, you use the `pwm_set_chan_level()` function to specify when the signal transitions between high and low within each PWM cycle.
-5. **Polarity Control:** If necessary, you can set the polarity of the PWM signal using `pwm_set_polarity()` to determine whether the signal starts high or low.
-6. **Enabling PWM:** Once you've configured the PWM slices and channels, you enable the PWM signal using `pwm_set_enabled()`.
-7. **Generation of PWM Signals:** Once enabled, the hardware takes care of generating the PWM signals based on your settings. The PWM signal is typically a square wave that repeats according to the configured frequency and duty cycle.
-8. **Updating Parameters:** If needed, you can update the PWM parameters, such as frequency or duty cycle, at runtime to modify the PWM signal.
-9. **Disabling PWM:** When you're done with PWM, you can disable it using `pwm_set_enabled()`.
+5. **Enabling PWM:** Once you've configured the PWM slices and channels, you enable the PWM signal using `pwm_set_enabled()`.
+7. **Updating Parameters:** If needed, you can update the PWM parameters, such as frequency or duty cycle, at runtime to modify the PWM signal.
+8. **Disabling PWM:** When you're done with PWM, disable it using `pwm_set_enabled()`.
 
-The following code [hello_pwm](https://github.com/raspberrypi/pico-examples/blob/master/pwm/hello_pwm/hello_pwm.c) illustrates a simple example of how a PWM can be configured on the Raspberry Pi Pico. You could connect GP0 and GP1 to an oscilloscope to observe the signal. Alternatively, you may observe the effects of PWM on the motor controller by connecting as described in the next section.
+The following code [hello_pwm](https://github.com/raspberrypi/pico-examples/blob/master/pwm/hello_pwm/hello_pwm.c) illustrates a simple example of how a PWM can be configured on the Raspberry Pi Pico. You could connect GP0 and GP1 to an oscilloscope to observe the signal. Alternatively, you may observe the effects of PWM on the motor controller by connecting, as described in the next section.
 
 ## **UNDERSTANDING THE L298N MOTOR CONTROLLER**
 
