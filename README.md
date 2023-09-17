@@ -32,6 +32,10 @@ The Raspberry Pi Pico, with its GPIO pins and the Pico C SDK, provides a conveni
 
 PWM slices are hardware modules on the Raspberry Pi Pico designed to generate PWM signals. These slices offer a flexible and efficient way to produce PWM waveforms with precise control over parameters like frequency, duty cycle, and polarity. The Pico has multiple PWM slices, and each slice can generate one or more PWM channels.
 
+The RP2040 PWM block has eight identical slices, where each slice can drive two PWM output signals or measure the frequency or duty cycle of an input signal. This gives a total of up to 16 controllable PWM outputs. All 30 GPIO pins can be driven by the PWM block, as shown below.
+
+<img src="/img/pwmgpio.png" width=100% height=100%>
+
 **Key Features and Concepts:**
 
 1. **Multiple PWM Slices:** The Pico typically has multiple PWM slices, each capable of generating one or more PWM channels. The actual number of slices and channels may vary depending on the specific microcontroller model used in the Pico.
