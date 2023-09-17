@@ -88,6 +88,6 @@ Again, we can re-use the adc_console code to demonstrate how ADC can be used to 
 
 ## **EXERCISE**
 
-To configure a PWM signal at 20 Hz with a 50% duty cycle on GP2 and feed it into an ADC at GP26 while sampling the ADC every 25 ms, you must use the Raspberry Pi Pico and its Pico C SDK. You will need to use a jumper wire to connect GP2 to GP26. The output to look as follows:
+To configure a PWM signal at 20 Hz with a 50% duty cycle on GP2 and feed it into an ADC at GP26 while sampling the ADC every 25 ms, you must use the Raspberry Pi Pico and its Pico C SDK. You will need to use a jumper wire to connect GP2 to GP26. You may use a timer interrupt. The output to look as follows:
 
 <img src="/img/ex4.png" width=100% height=100%>
