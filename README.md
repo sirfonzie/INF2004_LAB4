@@ -32,20 +32,14 @@ The Raspberry Pi Pico, with its GPIO pins and the Pico C SDK, provides a conveni
 
 PWM slices are hardware modules on the Raspberry Pi Pico designed to generate PWM signals. These slices offer a flexible and efficient way to produce PWM waveforms with precise control over parameters like frequency, duty cycle, and polarity. The Pico has multiple PWM slices, and each slice can generate one or more PWM channels.
 
+**Key Features and Concepts:**
+
 The RP2040 PWM block has eight identical slices, where each slice can drive two PWM output signals or measure the frequency or duty cycle of an input signal. This gives a total of up to 16 controllable PWM outputs. All 30 GPIO pins can be driven by the PWM block, as shown below.
 
 <img src="/img/pwmgpio.png" width=100% height=100%>
 
-**Key Features and Concepts:**
-
-1. **Multiple PWM Slices:** The Pico typically has multiple PWM slices, each capable of generating one or more PWM channels. The actual number of slices and channels may vary depending on the specific microcontroller model used in the Pico.
-2. **PWM Channels:** Each PWM slice can generate one or more PWM channels. A PWM channel corresponds to a specific GPIO pin that can output a PWM signal. This allows you to control multiple devices or components independently.
-3. **Frequency:** PWM slices allow you to set the frequency of the PWM signal. Frequency is the number of PWM cycles (periods) per second. Higher frequencies can provide smoother control but may require more CPU resources.
-4. **Duty Cycle:** The duty cycle represents the proportion of time during one PWM cycle that the signal is high (on). It is usually expressed as a percentage. A 50% duty cycle means the signal is high for half of the cycle.
-
 **How PWM Slices Work:**
 
-Here's a brief explanation of how PWM slices work on the Raspberry Pi Pico:
 1. **Initialization:** Before using PWM, initialize the PWM system using the `pwm_init()` function. This initializes all PWM slices and channels.
 2. **Configuring Channels:** You configure the GPIO pins for PWM operation by setting their functions to `GPIO_FUNC_PWM` using `gpio_set_function()`. This allocates the pins to specific PWM channels.
 3. **Frequency Setup:** You set the desired PWM frequency using the `pwm_set_wrap()` function. This determines how fast the PWM signal oscillates between high and low.
