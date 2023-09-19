@@ -66,6 +66,8 @@ The following changes are required:
 
 This modified code snippet configures the Raspberry Pi Pico to generate PWM (Pulse Width Modulation) signals on GP0 via the gpio_set_function function. It then obtains the PWM slice number associated with GP0 and sets the clock divisor to 100, reducing the main clock from 125Mhz to 1.25Mhz frequency. The pwm_set_wrap function sets the PWM wrap value, essentially determining the period of the PWM signal. Here, it's set to 12500, which corresponds to a period of 10ms. This is obtained as follows: ```((1 / 1.25Mhz)*12500) ```. pwm_set_chan_level sets the duty cycle of the PWM signal on channel A of the specified PWM slice to 50% (12500/2). Finally, pwm_set_enabled enables the PWM output on the specified slice. In summary, this code initializes PWM on GP0 with a 100Hz frequency and a 50% duty cycle, effectively generating a square wave output.
 
+The N3 and N4 pins on the L298N motor controller are used to control the turning direction of the motor. In this example, we permanently set N3 to HIGH (3.3V) and N4 to LOW (GND). Swapping this would make the motor turn the other way. For your project, you would want to connect these 2 pins to a GPIO configured as output that would allow you to control the direction of the motor via software/code.
+
 <img src="/img/motor.png" width=100% height=100%>
 
 ## **ANALOG-TO-DIGITAL CONVERTER**
