@@ -54,8 +54,8 @@ The following code [hello_pwm](https://github.com/raspberrypi/pico-examples/blob
 
 The L298N module is a high-power motor driver module for driving DC and stepper motors. This module comprises an L298 motor driver IC and a 78M05 5V regulator. This module can control up to two DC motors with directional and speed control. The module's datasheet can be found at the following [link](https://components101.com/modules/l293n-motor-driver-module). 
 
-<img src="/img/l298n_pinout.png" width=100% height=100%>
-HiBit. (2023). *L298N motor driver pinout diagram*. Retrieved from https://cdn.hibit.dev/images/posts/2023/schemas/l298n_pinout.png
+<img src="/img/l298n_pinout.png" width=50% height=50%>
+HiBit. (2023). *L298N motor driver pinout diagram*. Retrieved from [here](https://cdn.hibit.dev/images/posts/2023/schemas/l298n_pinout.png)
 
 There are two ways for this module to control the speed of the motor. An easier way would be to use a jumper across ENA and ENB to fix the voltage to the maximum. However, removing the jumper and connecting the pin to a PWM source would facilitate controlling the motor’s speed. PWM is a widely used technique to control the speed of DC motors, including those used in robotics and other applications.
 
