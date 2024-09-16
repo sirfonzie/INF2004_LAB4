@@ -2,9 +2,9 @@
 #include "hardware/pwm.h"
 
 // Define GPIO pins
-#define PWM_PIN 0     // GP0 for PWM
-#define DIR_PIN1 2    // GP2 for direction
-#define DIR_PIN2 3    // GP3 for direction
+#define PWM_PIN 2     // GP2 for PWM
+#define DIR_PIN1 0    // GP0 for direction
+#define DIR_PIN2 1    // GP1 for direction
 
 // Function to set up the PWM
 void setup_pwm(uint gpio, float freq, float duty_cycle) {
