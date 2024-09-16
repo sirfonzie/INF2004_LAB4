@@ -55,7 +55,8 @@ The following code [hello_pwm](https://github.com/raspberrypi/pico-examples/blob
 The L298N module is a high-power motor driver module for driving DC and stepper motors. This module comprises an L298 motor driver IC and a 78M05 5V regulator. This module can control up to two DC motors with directional and speed control. The module's datasheet can be found at the following [link](https://components101.com/modules/l293n-motor-driver-module). 
 
 <img src="/img/l298n_pinout.png" width=30% height=30%>
-HiBit. (2023). *L298N motor driver pinout diagram*. Retrieved from [link](https://components101.com/modules/l293n-motor-driver-module)
+
+HiBit. (2023). *L298N motor driver pinout diagram* Retrieved from [here](https://components101.com/modules/l293n-motor-driver-module) 
 
 https://cdn.hibit.dev/images/posts/2023/schemas/l298n_pinout.png
 
