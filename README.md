@@ -80,9 +80,9 @@ This modified code snippet configures the Raspberry Pi Pico to generate PWM (Pul
 
 The L298N motor controller's N3 and N4 pins control the motor's turning direction. In this example, we connect N3 to GP0 and N4 to GP1. By setting GP0 and GP1 to different combinations of High and Low, the motor can be controlled to rotate clockwise, counterclockwise, or stop. For example:
 
-- Setting GPIO2 High and GPIO3 Low will rotate the motor clockwise.
-- Setting GPIO2 Low and GPIO3 High will rotate the motor counterclockwise.
-- Setting both GPIO2 and GPIO3 either High or Low will stop the motor."
+- Setting GP0 High and GP1 Low will rotate the motor clockwise.
+- Setting GP0 Low and GP1 High will rotate the motor counterclockwise.
+- Setting both GP0 and GP1 either High or Low will stop the motor."
 
 <img src="/img/l298npico.png" width=100% height=100%>
 
