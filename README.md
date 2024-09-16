@@ -68,7 +68,7 @@ This modified code snippet configures the Raspberry Pi Pico to generate PWM (Pul
 
 The N3 and N4 pins on the L298N motor controller are used to control the turning direction of the motor. In this example, we permanently set N3 to HIGH (3.3V) and N4 to LOW (GND). Swapping this would make the motor turn the other way. For your project, you would want to connect these 2 pins to a GPIO configured as output that would allow you to control the direction of the motor via software/code.
 
-<img src="/img/motor.png" width=100% height=100%>
+<img src="/img/l298npico.png" width=100% height=100%>
 
 ## **ANALOG-TO-DIGITAL CONVERTER**
 
