@@ -174,6 +174,88 @@ An Analog-to-Digital Converter (ADC) on the Raspberry Pi Pico functions by conve
 
 The following code [adc_console](https://github.com/raspberrypi/pico-examples/blob/master/adc/adc_console/adc_console.c) illustrates a simple example of how an ADC can be configured on the Raspberry Pi Pico. This code creates a console interface for interacting with the Raspberry Pi Pico's ADC, allowing users to select channels, sample analog data, capture multiple samples, and perform GPIO operations for testing and experimentation.
 
+The code you provided deals with the ADC (Analog-to-Digital Converter) functionality on the Raspberry Pi Pico. Let’s break down the sections that affect the ADC operations.
+
+### 1. **ADC Initialization (`adc_init()`)**
+   ```c
+   adc_init();
+   ```
+   - This initializes the ADC peripheral. It sets up the ADC for further operations, including reading analog values. The `adc_init()` function prepares the ADC for subsequent operations like enabling the temperature sensor and selecting input channels.
+
+### 2. **Enable Temperature Sensor (`adc_set_temp_sensor_enabled(true)`)**
+   ```c
+   adc_set_temp_sensor_enabled(true);
+   ```
+   - This enables the internal temperature sensor as an ADC input. The temperature sensor is connected to one of the internal ADC channels, allowing you to read temperature data. 
+
+### 3. **Selecting the ADC Input Channel (`adc_select_input(c - '0')`)**
+   ```c
+   adc_select_input(c - '0');
+   ```
+   - This section allows you to select an ADC channel based on user input. The code converts the ASCII value of the input (`c`) into a number (`c - '0'`) to select the corresponding ADC input channel (0–7).
+   - The function `adc_select_input()` configures the ADC to sample from the specified input channel.
+
+### 4. **Single ADC Sample (`adc_read()`)**
+   ```c
+   uint32_t result = adc_read();
+   const float conversion_factor = 3.3f / (1 << 12);
+   printf("\n0x%03x -> %f V\n", result, result * conversion_factor);
+   ```
+   - This block reads a single sample from the selected ADC channel.
+   - The `adc_read()` function returns the raw ADC value (a 12-bit number). 
+   - The **conversion factor** converts the ADC reading to a voltage value. Since the ADC has 12-bit resolution (i.e., it can output values from 0 to 4095), the reading is mapped to a voltage range (0 to 3.3V).
+   - The result is then printed, both as a hexadecimal value and as a voltage.
+
+### 5. **Capturing Multiple ADC Samples (`adc_capture(sample_buf, N_SAMPLES)`)**
+   ```c
+   adc_capture(sample_buf, N_SAMPLES);
+   ```
+   - This function captures multiple ADC samples and stores them in the `sample_buf` buffer. The number of samples to capture is defined by the constant `N_SAMPLES`.
+   - The function `adc_fifo_get_blocking()` is used inside `adc_capture()` to retrieve each ADC sample from the FIFO (First In, First Out) buffer and store it in the buffer array.
+
+   ### Key elements inside `adc_capture()`:
+   - **FIFO Setup (`adc_fifo_setup()`)**: 
+     ```c
+     adc_fifo_setup(true, false, 0, false, false);
+     ```
+     This function configures the ADC's FIFO buffer. It ensures that the FIFO is enabled and ready to store ADC data.
+   
+   - **Enable ADC and Capture Samples**:
+     ```c
+     adc_run(true);
+     for (size_t i = 0; i < count; i = i + 1)
+         buf[i] = adc_fifo_get_blocking();
+     adc_run(false);
+     ```
+     The ADC is started with `adc_run(true)`, and the loop reads multiple samples from the FIFO buffer using `adc_fifo_get_blocking()`. Once all samples are captured, the ADC is stopped with `adc_run(false)`.
+
+   - **Drain the FIFO (`adc_fifo_drain()`)**: 
+     ```c
+     adc_fifo_drain();
+     ```
+     This function clears the FIFO after the sampling operation to ensure no leftover data remains in the buffer.
+
+### 6. **Displaying Multiple Samples:**
+   ```c
+   for (int i = 0; i < N_SAMPLES; i = i + 1)
+       printf("%03x\n", sample_buf[i]);
+   ```
+   - After capturing the ADC samples, the program iterates through the buffer and prints each sample in hexadecimal format. The `sample_buf[]` array holds the raw ADC values from the multi-sample capture.
+
+### 7. **User Commands for ADC:**
+   - The program provides a simple console-based interface to interact with the ADC. The relevant commands for the ADC are:
+     - **`c[n]`**: Switch ADC input to channel `n` (0–7).
+     - **`s`**: Sample the ADC once and display the result.
+     - **`S`**: Capture multiple samples (as defined by `N_SAMPLES`) and print the results.
+
+### Summary:
+- **Initialization**: The ADC is initialized, and the temperature sensor is enabled.
+- **Channel Selection**: The user can select an ADC input channel (0–7).
+- **Single Sample**: The code reads a single ADC sample, converts it to voltage, and prints it.
+- **Multiple Samples**: The code can capture multiple ADC samples and print them after storing them in a buffer.
+- **FIFO Management**: FIFO is used to handle the multiple samples, with functions to start, stop, and clear the FIFO as needed.
+
+
 ## **CONFIGURING THE IR-BASED LINE SENSOR**
 
 The IR line sensor is a reflective sensor that includes an infrared emitter and phototransistor in a leaded package which blocks visible light. The infrared emission diode constantly emits infrared rays. When the intensity of the reflection is not received or is not large enough, the light-activated diode will be in the off state. However, if the sensor detects an object within the field of view, infrared light is reflected back and activates the diode.
