@@ -50,7 +50,7 @@ The RP2040 PWM block has eight identical slices, where each slice can drive two 
 
 The following code [hello_pwm](https://github.com/raspberrypi/pico-examples/blob/master/pwm/hello_pwm/hello_pwm.c) illustrates a simple example of how a PWM can be configured on the Raspberry Pi Pico. You could connect GP0 and GP1 to an oscilloscope to observe the signal. Alternatively, you may observe the effects of PWM on the motor controller by connecting, as described in the next section.
 
-## **UNDERSTANDING THE L298N MOTOR CONTROLLER**
+## **UNDERSTANDING THE L298N MOTOR CONTROLLER - hello_pwm example**
 
 The L298N module is a high-power motor driver module for driving DC and stepper motors. This module comprises an L298 motor driver IC and a 78M05 5V regulator. This module can control up to two DC motors with directional and speed control. The module's datasheet can be found at the following [link](https://components101.com/modules/l293n-motor-driver-module). 
 
@@ -75,6 +75,101 @@ This modified code snippet configures the Raspberry Pi Pico to generate PWM (Pul
 The N3 and N4 pins on the L298N motor controller are used to control the turning direction of the motor. In this example, we permanently set N3 to HIGH (3.3V) and N4 to LOW (GND). Swapping this would make the motor turn the other way. For your project, you would want to connect these 2 pins to a GPIO configured as output that would allow you to control the direction of the motor via software/code.
 
 <img src="/img/l298npico.png" width=100% height=100%>
+
+## **UNDERSTANDING THE L298N MOTOR CONTROLLER - pwm_set_gpio_level example**
+
+The provided C [code](https://github.com/sirfonzie/INF2004_LAB4/blob/main/l298n.c) demonstrates how to configure a Raspberry Pi Pico to use Pulse Width Modulation (PWM) on GP2 and control motor direction using an L298N motor driver via GP0 and GP1. Let's break down the essence of each part of the PWM-related functions and other elements in the [code](https://github.com/sirfonzie/INF2004_LAB4/blob/main/l298n.c).
+
+### Key Concepts:
+- **PWM (Pulse Width Modulation)**: A technique to control the voltage output by rapidly switching the output between high and low, effectively varying the average voltage over time. It is widely used in motor control, LED brightness control, and other applications where analog-like behavior is desired from digital signals.
+- **Duty Cycle**: The percentage of time the signal is in a high (on) state within a single PWM period. For example, a 50% duty cycle means the signal is high for half the time and low for the other half.
+- **Frequency**: The number of times the PWM cycle repeats per second. For motor control, a typical PWM frequency might be in the range of 100Hz to a few kHz.
+
+### Breakdown of PWM Functions:
+
+3. **`setup_pwm` Function:**
+   This function is the heart of the PWM configuration, setting the frequency and duty cycle for a specified GPIO pin.
+   
+   - **Set the GPIO function to PWM:**
+     ```c
+     gpio_set_function(gpio, GPIO_FUNC_PWM);
+     ```
+     This configures the specified GPIO pin (e.g., `PWM_PIN`) to function as a PWM output.
+
+   - **Find the PWM slice:**
+     ```c
+     uint slice_num = pwm_gpio_to_slice_num(gpio);
+     ```
+     Each GPIO pin has an associated **PWM slice** (hardware block) in the Raspberry Pi Pico's PWM peripheral. This function retrieves the correct slice number for the specified GPIO pin. This allows us to configure PWM parameters for that particular slice.
+
+   - **Calculate the clock divider and set the PWM frequency:**
+     ```c
+     float clock_freq = 125000000.0f;  // Default clock frequency of the Pico in Hz
+     uint32_t divider = clock_freq / (freq * 4096);  // Compute clock divider
+     pwm_set_clkdiv(slice_num, divider);
+     ```
+     The Raspberry Pi Pico operates with a clock frequency of 125 MHz. The divider is calculated based on the target frequency (`freq`) and the resolution (12 bits, or 4096 steps for PWM). This ensures the PWM frequency is set to the desired value (100Hz in this case).
+
+   - **Set the PWM wrap value:**
+     ```c
+     pwm_set_wrap(slice_num, 4095);  // 12-bit resolution (0-4095)
+     ```
+     The **wrap value** defines the maximum count of the PWM cycle. A value of `4095` corresponds to a 12-bit resolution (0 to 4095 steps), which means the PWM can modulate with a precision of 1/4096.
+
+   - **Set the duty cycle:**
+     ```c
+     pwm_set_gpio_level(gpio, (uint16_t)(duty_cycle * 4095));
+     ```
+     The `pwm_set_gpio_level` function sets the output level for the given GPIO pin based on the duty cycle. A duty cycle of 50% corresponds to setting the output level to half the wrap value (2048). This ensures the PWM signal is high 50% of the time.
+
+   - **Enable the PWM:**
+     ```c
+     pwm_set_enabled(slice_num, true);
+     ```
+     This enables the PWM for the specified slice.
+
+4. **`main` Function:**
+   This is the main loop of the program that controls the motor direction using GPIO pins connected to the L298N motor driver.
+
+   - **Initialize GPIO pins for direction control:**
+     ```c
+     gpio_init(DIR_PIN1);
+     gpio_init(DIR_PIN2);
+     gpio_set_dir(DIR_PIN1, GPIO_OUT);
+     gpio_set_dir(DIR_PIN2, GPIO_OUT);
+     ```
+     GPIO2 and GPIO3 are initialized and set as outputs. These pins will control the direction of the motor via the L298N H-bridge motor driver.
+
+   - **Set up the PWM on GPIO0:**
+     ```c
+     setup_pwm(PWM_PIN, 100.0f, 0.5f);
+     ```
+     This calls the `setup_pwm` function to configure GPIO0 with a 100Hz PWM frequency and a 50% duty cycle.
+
+   - **Control motor direction in an infinite loop:**
+     ```c
+     while (true) {
+         gpio_put(DIR_PIN1, 1);  // Forward direction
+         gpio_put(DIR_PIN2, 0);
+         sleep_ms(2000);         // Wait for 2 seconds
+
+         gpio_put(DIR_PIN1, 0);  // Reverse direction
+         gpio_put(DIR_PIN2, 1);
+         sleep_ms(2000);         // Wait for 2 seconds
+     }
+     ```
+     Inside the loop:
+     - It first sets the direction of the motor to forward by setting GPIO2 high and GPIO3 low.
+     - After 2 seconds, it reverses the direction by toggling GPIO2 and GPIO3.
+     - This loop continuously switches the motor between forward and reverse every 2 seconds.
+
+### Summary of PWM Functions:
+- **`setup_pwm()`**: Configures the PWM output on a given GPIO pin with a specified frequency and duty cycle. It handles the setup of the PWM slice, clock divider, wrap value, and output level.
+- **`pwm_gpio_to_slice_num()`**: Retrieves the PWM slice associated with a GPIO pin.
+- **`pwm_set_wrap()`**: Sets the maximum count for the PWM cycle (i.e., the resolution).
+- **`pwm_set_gpio_level()`**: Sets the duty cycle of the PWM signal on a specific GPIO pin.
+- **`pwm_set_enabled()`**: Enables the PWM for the given slice.
+
 
 ## **ANALOG-TO-DIGITAL CONVERTER**
 
