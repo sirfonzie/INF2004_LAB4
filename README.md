@@ -68,23 +68,24 @@ https://cdn.hibit.dev/images/posts/2023/schemas/l298n_pinout.png
 
 There are two ways for this module to control the speed of the motor. An easier way would be to use a jumper across ENA and ENB to fix the voltage to the maximum. However, removing the jumper and connecting the pin to a PWM source would facilitate controlling the motor’s speed. PWM is a widely used technique to control the speed of DC motors, including those used in robotics and other applications.
 
+<img src="/img/l298npico.png" width=100% height=100%>
+
 Again, we can use the [hello_pwm](https://github.com/raspberrypi/pico-examples/blob/master/pwm/hello_pwm/hello_pwm.c) code with some changes to demonstrate how PWM can control the motor speed using the L298N motor controller. Connect the motor controller as follows and observe how fast the motor turns.
 
 The following changes are required:
+1. change line #16: `gpio_set_function(0, GPIO_FUNC_PWM);` --> 'gpio_set_function(2, GPIO_FUNC_PWM);'
 1. include this in line #21: `pwm_set_clkdiv(slice_num, 100);`
 2. change line #23: `pwm_set_wrap(slice_num, 3);` --> `pwm_set_wrap(slice_num, 12500);`
 3. change line #25: `pwm_set_chan_level(slice_num, PWM_CHAN_A, 1);` --> `pwm_set_chan_level(slice_num, PWM_CHAN_A, 12500/2);`  
 4. comment off line #27: `pwm_set_chan_level(slice_num, PWM_CHAN_B, 3);` --> `\\pwm_set_chan_level(slice_num, PWM_CHAN_B, 3);`
 
-This modified code snippet configures the Raspberry Pi Pico to generate PWM (Pulse Width Modulation) signals on GP0 via the gpio_set_function function. It then obtains the PWM slice number associated with GP0 and sets the clock divisor to 100, reducing the main clock from 125Mhz to 1.25Mhz frequency. The pwm_set_wrap function sets the PWM wrap value, essentially determining the period of the PWM signal. Here, it's set to 12500, which corresponds to a period of 10ms. This is obtained as follows: ```((1 / 1.25Mhz)*12500) ```. pwm_set_chan_level sets the duty cycle of the PWM signal on channel A of the specified PWM slice to 50% (12500/2). Finally, pwm_set_enabled enables the PWM output on the specified slice. In summary, this code initializes PWM on GP0 with a 100Hz frequency and a 50% duty cycle, effectively generating a square wave output.
+This modified code snippet configures the Raspberry Pi Pico to generate PWM (Pulse Width Modulation) signals on GP2 via the gpio_set_function function. It then obtains the PWM slice number associated with GP0 and sets the clock divisor to 100, reducing the main clock from 125Mhz to 1.25Mhz frequency. The pwm_set_wrap function sets the PWM wrap value, essentially determining the period of the PWM signal. Here, it's set to 12500, which corresponds to a period of 10ms. This is obtained as follows: ```((1 / 1.25Mhz)*12500) ```. pwm_set_chan_level sets the duty cycle of the PWM signal on channel A of the specified PWM slice to 50% (12500/2). Finally, pwm_set_enabled enables the PWM output on the specified slice. In summary, this code initializes PWM on GP0 with a 100Hz frequency and a 50% duty cycle, effectively generating a square wave output.
 
 The L298N motor controller's N3 and N4 pins control the motor's turning direction. In this example, we connect N3 to GP0 and N4 to GP1. By setting GP0 and GP1 to different combinations of High and Low, the motor can be controlled to rotate clockwise, counterclockwise, or stop. For example:
 
 - Setting GP0 High and GP1 Low will rotate the motor clockwise.
 - Setting GP0 Low and GP1 High will rotate the motor counterclockwise.
 - Setting both GP0 and GP1 either High or Low will stop the motor."
-
-<img src="/img/l298npico.png" width=100% height=100%>
 
 ## **UNDERSTANDING THE L298N MOTOR CONTROLLER - pwm_set_gpio_level example**
 
@@ -185,6 +186,6 @@ Again, we can re-use the adc_console code to demonstrate how ADC can be used to 
 
 ## **EXERCISE**
 
-To configure a PWM signal at 20 Hz with a 50% duty cycle on GP2 and feed it into an ADC at GP26 while sampling the ADC every 25 ms, you must use the Raspberry Pi Pico and its Pico C SDK. You will need to use a jumper wire to connect GP2 to GP26. You may use a timer interrupt. The output to look as follows:
+To configure a PWM signal at 20 Hz with a 50% duty cycle on GP0 and feed it into an ADC at GP26 while sampling the ADC every 25 ms, you must use the Raspberry Pi Pico and its Pico C SDK. You will need to use a jumper wire to connect GP2 to GP26. You may use a timer interrupt. The output to look as follows:
 
 <img src="/img/ex4.png" width=100% height=100%>
