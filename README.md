@@ -84,9 +84,9 @@ The N3 and N4 pins on the L298N motor controller are used to control the turning
 
 ## **UNDERSTANDING THE L298N MOTOR CONTROLLER - pwm_set_gpio_level example**
 
-The provided C [code](https://github.com/sirfonzie/INF2004_LAB4/blob/main/l298n.c) demonstrates how to configure a Raspberry Pi Pico to use Pulse Width Modulation (PWM) on GP2 and control motor direction using an L298N motor driver via GP0 and GP1. Let's break down the essence of each part of the PWM-related functions and other elements in the [code](https://github.com/sirfonzie/INF2004_LAB4/blob/main/l298n.c).
+The provided alternative C [code](https://github.com/sirfonzie/INF2004_LAB4/blob/main/l298n.c) demonstrates how to configure a Raspberry Pi Pico to use Pulse Width Modulation (PWM) on GP2 and control motor direction using an L298N motor driver via GP0 and GP1. Let's break down the essence of each part of the PWM-related functions and other elements in the [code](https://github.com/sirfonzie/INF2004_LAB4/blob/main/l298n.c).
 
-### Key Code Snippets Explained:
+### Key PWM-related Code Snippets Explained:
 
 1. **`setup_pwm` Function:**
    This function is the heart of the PWM configuration, setting the frequency and duty cycle for a specified GPIO pin.
@@ -132,20 +132,11 @@ The provided C [code](https://github.com/sirfonzie/INF2004_LAB4/blob/main/l298n.
 2. **`main` Function:**
    This is the main loop of the program that controls the motor direction using GPIO pins connected to the L298N motor driver.
 
-   - **Initialize GPIO pins for direction control:**
-     ```c
-     gpio_init(DIR_PIN1);
-     gpio_init(DIR_PIN2);
-     gpio_set_dir(DIR_PIN1, GPIO_OUT);
-     gpio_set_dir(DIR_PIN2, GPIO_OUT);
-     ```
-     GPIO2 and GPIO3 are initialized and set as outputs. These pins will control the direction of the motor via the L298N motor driver.
-
-   - **Set up the PWM on GPIO0:**
+   - **Set up the PWM on GP2:**
      ```c
      setup_pwm(PWM_PIN, 100.0f, 0.5f);
      ```
-     This calls the `setup_pwm` function to configure GPIO0 with a 100Hz PWM frequency and a 50% duty cycle.
+     This calls the `setup_pwm` function to configure GP2 with a 100Hz PWM frequency and a 50% duty cycle.
 
    - **Control motor direction in an infinite loop:**
      ```c
