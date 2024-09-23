@@ -16,14 +16,14 @@ void setup_pwm(uint gpio, float freq, float duty_cycle) {
 
     // Calculate the PWM frequency and set the PWM wrap value
     float clock_freq = 125000000.0f;  // Default Pico clock frequency in Hz
-    uint32_t divider = clock_freq / (freq * 4096);  // Compute divider for given frequency
+    uint32_t divider = clock_freq / (freq * 65536);  // Compute divider for given frequency
     pwm_set_clkdiv(slice_num, divider);
 
     // Set the PWM wrap value (maximum count value)
-    pwm_set_wrap(slice_num, 4095);  // 12-bit resolution (0-4095)
+    pwm_set_wrap(slice_num, 65536);  // 16-bit counter
 
-    // Set the duty cycle (50% = 2048/4096)
-    pwm_set_gpio_level(gpio, (uint16_t)(duty_cycle * 4095));
+    // Set the duty cycle
+    pwm_set_gpio_level(gpio, (uint16_t)(duty_cycle * 65536));
 
     // Enable the PWM
     pwm_set_enabled(slice_num, true);
