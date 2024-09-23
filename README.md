@@ -111,22 +111,22 @@ The provided alternative C [code](https://github.com/sirfonzie/INF2004_LAB4/blob
    - **Calculate the clock divider and set the PWM frequency:**
      ```c
      float clock_freq = 125000000.0f;  // Default clock frequency of the Pico in Hz
-     uint32_t divider = clock_freq / (freq * 4096);  // Compute clock divider
+     uint32_t divider = clock_freq / (freq * 65536);  // Compute clock divider
      pwm_set_clkdiv(slice_num, divider);
      ```
-     The Raspberry Pi Pico operates with a clock frequency of 125 MHz. The divider is calculated based on the target frequency (`freq`) and the resolution (12 bits, or 4096 steps for PWM). This ensures the PWM frequency is set to the desired value (100Hz in this example).
+     The Raspberry Pi Pico operates with a clock frequency of 125 MHz. The divider is calculated based on the target frequency (`freq`) and the resolution (16 bits, or 65536 steps for PWM), ensuring the PWM frequency is set to the desired value.
 
    - **Set the PWM wrap value:**
      ```c
-     pwm_set_wrap(slice_num, 4095);  // 12-bit resolution (0-4095)
+     pwm_set_wrap(slice_num, 65535);  // 16-bit resolution (0-65535)
      ```
-     The **wrap value** defines the maximum count of the PWM cycle. A value of `4095` corresponds to a 12-bit resolution (0 to 4095 steps), which means the PWM can modulate with a precision of 1/4096.
+     The **wrap value** defines the maximum count of the PWM cycle. A value of `65535` corresponds to a 16-bit resolution (0 to 65535 steps), which means the PWM can modulate with a precision of 1/65536.
 
    - **Set the duty cycle:**
      ```c
-     pwm_set_gpio_level(gpio, (uint16_t)(duty_cycle * 4095));
+     pwm_set_gpio_level(gpio, (uint16_t)(duty_cycle * 65535));
      ```
-     The `pwm_set_gpio_level` function sets the output level for the given GPIO pin based on the duty cycle. A duty cycle of 50% corresponds to setting the output level to half the wrap value (2048), ensuring the PWM signal is high 50% of the time.
+     The `pwm_set_gpio_level` function sets the output level for the given GPIO pin based on the duty cycle. A duty cycle of 50% corresponds to setting the output level to half the wrap value, ensuring the PWM signal is high 50% of the time.
 
    - **Enable the PWM:**
      ```c
