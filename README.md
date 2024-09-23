@@ -124,7 +124,7 @@ The provided alternative C [code](https://github.com/sirfonzie/INF2004_LAB4/blob
 
    - **Set the duty cycle:**
      ```c
-     pwm_set_gpio_level(gpio, (uint16_t)(duty_cycle * 65535));
+     pwm_set_gpio_level(gpio, (uint16_t)(duty_cycle * 65536));
      ```
      The `pwm_set_gpio_level` function sets the output level for the given GPIO pin based on the duty cycle. A duty cycle of 50% corresponds to setting the output level to half the wrap value, ensuring the PWM signal is high 50% of the time.
 
