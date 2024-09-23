@@ -20,7 +20,7 @@ void setup_pwm(uint gpio, float freq, float duty_cycle) {
     pwm_set_clkdiv(slice_num, divider);
 
     // Set the PWM wrap value (maximum count value)
-    pwm_set_wrap(slice_num, 65535);  // 16-bit counter
+    pwm_set_wrap(slice_num, 65535);  // 16-bit counter (0 - 65535)
 
     // Set the duty cycle
     pwm_set_gpio_level(gpio, (uint16_t)(duty_cycle * 65536));
