@@ -72,6 +72,8 @@ There are two ways for this module to control the speed of the motor. An easier 
 
 Again, we can use the [hello_pwm](https://github.com/raspberrypi/pico-examples/blob/master/pwm/hello_pwm/hello_pwm.c) code with some changes to demonstrate how PWM can control the motor speed using the L298N motor controller. Connect the motor controller as follows and observe how fast the motor turns.
 
+An alternative image of connecting them can be seen [here](/img/motorconnection.jpg).
+
 The following changes are required:
 1. change line #16: `gpio_set_function(0, GPIO_FUNC_PWM);` --> `gpio_set_function(2, GPIO_FUNC_PWM);`
 1. include this in line #21: `pwm_set_clkdiv(slice_num, 100);`
